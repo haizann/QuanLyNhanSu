@@ -14,14 +14,14 @@ import com.example.quanlyns.entity.response.ApiResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import tools.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     private final AuthenticationEntryPoint delegate = new BearerTokenAuthenticationEntryPoint();
 
-    private final tools.jackson.databind.ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
     public CustomAuthenticationEntryPoint(ObjectMapper mapper) {
         this.mapper = mapper;
