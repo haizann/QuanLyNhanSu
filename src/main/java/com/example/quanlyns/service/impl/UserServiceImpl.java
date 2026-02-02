@@ -4,9 +4,13 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.example.quanlyns.entity.User;
+import com.example.quanlyns.entity.dto.Meta;
+import com.example.quanlyns.entity.dto.ResultPaginationDTO;
 import com.example.quanlyns.repository.UserRepository;
 import com.example.quanlyns.service.UserService;
 
@@ -25,8 +29,20 @@ public class UserServiceImpl implements UserService {
 		return userRepository.save(user);
 	}
 
-	public List<User> getAllUsers() {
-		return userRepository.findAll();
+	public ResultPaginationDTO getAllUsers(Pageable pageable) {
+		Page<User> pageUser = this.userRepository.findAll(pageable);
+		ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
+		Meta meta = new Meta();
+
+		meta.setPage(pageUser.getNumber());
+		meta.setSizePage(pageUser.getSize());
+		meta.setPages(pageUser.getTotalPages());
+		meta.setTotal(pageUser.getTotalElements());
+
+		resultPaginationDTO.setMeta(meta);
+		resultPaginationDTO.setResult(pageUser.getContent());
+
+		return resultPaginationDTO;
 	}
 
 	public Optional<User> getUserById(Long id) {

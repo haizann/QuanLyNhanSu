@@ -3,6 +3,7 @@ package com.example.quanlyns.controller;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.quanlyns.entity.Company;
+import com.example.quanlyns.entity.dto.ResultPaginationDTO;
 import com.example.quanlyns.entity.response.ApiResponse;
 import com.example.quanlyns.service.CompanyService;
 
@@ -10,6 +11,8 @@ import jakarta.validation.Valid;
 
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
@@ -28,10 +32,17 @@ public class CompanyController {
     }
 
     @GetMapping("/company")
-    public ResponseEntity<ApiResponse<List<Company>>> getAllCompany() {
-        List<Company> listCompany = this.companyService.getAllCompanies();
+    public ResponseEntity<ApiResponse<ResultPaginationDTO>> getAllCompany(
+            @RequestParam(value = "current", defaultValue = "1") String sCurrent,
+            @RequestParam(value = "pageSize", defaultValue = "10") String sPageSize) {
 
-        var result = new ApiResponse<>(HttpStatus.OK, "getAllCompany", listCompany, null);
+        int current = Integer.parseInt(sCurrent);
+        int pageSize = Integer.parseInt(sPageSize);
+
+        Pageable pageable = PageRequest.of(current - 1, pageSize);
+
+        var result = new ApiResponse<>(HttpStatus.OK, "getAllCompany", this.companyService.getAllCompanies(pageable),
+                null);
 
         return ResponseEntity.ok().body(result);
     }

@@ -4,9 +4,13 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.example.quanlyns.entity.Company;
+import com.example.quanlyns.entity.dto.Meta;
+import com.example.quanlyns.entity.dto.ResultPaginationDTO;
 import com.example.quanlyns.repository.CompanyRepository;
 
 @Service
@@ -25,8 +29,20 @@ public class CompanyService {
         return this.companyRepository.findById(id);
     }
 
-    public List<Company> getAllCompanies() {
-        return this.companyRepository.findAll();
+    public ResultPaginationDTO getAllCompanies(Pageable pageable) {
+        Page<Company> pageCompany = this.companyRepository.findAll(pageable);
+        Meta meta = new Meta();
+        ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
+
+        meta.setPage(pageCompany.getNumber());
+        meta.setSizePage(pageCompany.getSize());
+        meta.setPages(pageCompany.getTotalPages());
+        meta.setTotal(pageCompany.getTotalElements());
+
+        resultPaginationDTO.setMeta(meta);
+        resultPaginationDTO.setResult(pageCompany.getContent());
+
+        return resultPaginationDTO;
     }
 
     public Company updateCompany(Long id, Company company) {

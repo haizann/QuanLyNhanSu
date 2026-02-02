@@ -1,7 +1,10 @@
 package com.example.quanlyns.controller;
 
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,9 +14,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.quanlyns.entity.User;
+import com.example.quanlyns.entity.dto.ResultPaginationDTO;
 import com.example.quanlyns.entity.response.ApiResponse;
 import com.example.quanlyns.service.UserService;
 
@@ -44,8 +49,15 @@ public class UserController {
 	}
 
 	@GetMapping("/users")
-	public ResponseEntity<ApiResponse<List<User>>> getAllUsers() {
-		var result = new ApiResponse<>(HttpStatus.OK, "getAllUsers", userService.getAllUsers(), null);
+	public ResponseEntity<ApiResponse<ResultPaginationDTO>> getAllUsers(
+			@RequestParam(value = "current", defaultValue = "1") String sCurrent,
+			@RequestParam(value = "pageSize", defaultValue = "10") String sPageSize) {
+
+		int current = Integer.parseInt(sCurrent);
+		int pageSize = Integer.parseInt(sPageSize);
+		Pageable pageable = PageRequest.of(current - 1, pageSize);
+
+		var result = new ApiResponse<>(HttpStatus.OK, "getAllUsers", userService.getAllUsers(pageable), null);
 		return ResponseEntity.ok().body(result);
 	}
 
