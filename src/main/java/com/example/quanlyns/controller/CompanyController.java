@@ -6,6 +6,7 @@ import com.example.quanlyns.entity.Company;
 import com.example.quanlyns.entity.dto.ResultPaginationDTO;
 import com.example.quanlyns.entity.response.ApiResponse;
 import com.example.quanlyns.service.CompanyService;
+import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
 
@@ -13,6 +14,7 @@ import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,15 +35,17 @@ public class CompanyController {
 
     @GetMapping("/company")
     public ResponseEntity<ApiResponse<ResultPaginationDTO>> getAllCompany(
-            @RequestParam(value = "current", defaultValue = "1") String sCurrent,
-            @RequestParam(value = "pageSize", defaultValue = "10") String sPageSize) {
+            // @RequestParam(value = "current", defaultValue = "1") String sCurrent,
+            // @RequestParam(value = "pageSize", defaultValue = "10") String sPageSize) {
+            @Filter Specification<Company> spect, Pageable pageable) {
 
-        int current = Integer.parseInt(sCurrent);
-        int pageSize = Integer.parseInt(sPageSize);
+        // int current = Integer.parseInt(sCurrent);
+        // int pageSize = Integer.parseInt(sPageSize);
 
-        Pageable pageable = PageRequest.of(current - 1, pageSize);
+        // Pageable pageable = PageRequest.of(current - 1, pageSize);
 
-        var result = new ApiResponse<>(HttpStatus.OK, "getAllCompany", this.companyService.getAllCompanies(pageable),
+        var result = new ApiResponse<>(HttpStatus.OK, "getAllCompany",
+                this.companyService.getAllCompanies(spect, pageable),
                 null);
 
         return ResponseEntity.ok().body(result);

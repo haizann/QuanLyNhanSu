@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.example.quanlyns.entity.Company;
@@ -29,12 +30,12 @@ public class CompanyService {
         return this.companyRepository.findById(id);
     }
 
-    public ResultPaginationDTO getAllCompanies(Pageable pageable) {
-        Page<Company> pageCompany = this.companyRepository.findAll(pageable);
+    public ResultPaginationDTO getAllCompanies(Specification<Company> spec, Pageable pageable) {
+        Page<Company> pageCompany = this.companyRepository.findAll(spec, pageable);
         Meta meta = new Meta();
         ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
 
-        meta.setPage(pageCompany.getNumber());
+        meta.setPage(pageCompany.getNumber() + 1);
         meta.setSizePage(pageCompany.getSize());
         meta.setPages(pageCompany.getTotalPages());
         meta.setTotal(pageCompany.getTotalElements());

@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +22,7 @@ import com.example.quanlyns.entity.User;
 import com.example.quanlyns.entity.dto.ResultPaginationDTO;
 import com.example.quanlyns.entity.response.ApiResponse;
 import com.example.quanlyns.service.UserService;
+import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
 
@@ -50,14 +52,17 @@ public class UserController {
 
 	@GetMapping("/users")
 	public ResponseEntity<ApiResponse<ResultPaginationDTO>> getAllUsers(
-			@RequestParam(value = "current", defaultValue = "1") String sCurrent,
-			@RequestParam(value = "pageSize", defaultValue = "10") String sPageSize) {
+			// @RequestParam(value = "current", defaultValue = "1") String sCurrent,
+			// @RequestParam(value = "pageSize", defaultValue = "10") String sPageSize
+			@Filter Specification spec, Pageable pageable) {
 
-		int current = Integer.parseInt(sCurrent);
-		int pageSize = Integer.parseInt(sPageSize);
-		Pageable pageable = PageRequest.of(current - 1, pageSize);
+		// int current = Integer.parseInt(sCurrent);
+		// int pageSize = Integer.parseInt(sPageSize);
+		// Pageable pageable = PageRequest.of(current - 1, pageSize);
 
-		var result = new ApiResponse<>(HttpStatus.OK, "getAllUsers", userService.getAllUsers(pageable), null);
+		var result = new ApiResponse<>(HttpStatus.OK, "getAllUsers",
+				this.userService.getAllUsers(spec, pageable),
+				null);
 		return ResponseEntity.ok().body(result);
 	}
 
