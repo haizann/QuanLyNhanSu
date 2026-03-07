@@ -3,9 +3,12 @@ package com.example.quanlyns.entity;
 import java.time.Instant;
 
 import com.example.quanlyns.util.SecurityUtil;
+import com.example.quanlyns.util.constant.GenderEnum;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -30,7 +33,10 @@ public class User {
     private String email;
     private String password;
     private int age;
-    private String gender;
+
+    @Enumerated(EnumType.STRING)
+    private GenderEnum gender;
+
     private String address;
     private String refeshToken;
 

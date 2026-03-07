@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -18,6 +19,8 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
+import com.example.quanlyns.service.UserDetailsCustom;
+import com.example.quanlyns.service.UserService;
 import com.example.quanlyns.util.SecurityUtil;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nimbusds.jose.util.Base64;
@@ -38,6 +41,13 @@ public class SecurityConfiguration {
         return new BCryptPasswordEncoder();
     }
 
+    // thay vì dùng @component ở UserDetailsCustom thì bỏ như này cũng đc, thông báo
+    // cho spring container biết đây là 1 bean để nó quản lý
+    // @Bean
+    // public UserDetailsService userDetailsService(UserService userService){
+    // return new UserDetailsCustom(userService);
+    // }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http,
             CustomAuthenticationEntryPoint customAuthenticationEntryPoint) throws Exception {
@@ -45,7 +55,7 @@ public class SecurityConfiguration {
                 .csrf(c -> c.disable())
                 .authorizeHttpRequests(
                         auth -> auth
-                                .requestMatchers("/", "/login").permitAll()
+                                .requestMatchers("/", "/api/v1/login").permitAll()
                                 .anyRequest().authenticated())
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults())
                         .authenticationEntryPoint(customAuthenticationEntryPoint))

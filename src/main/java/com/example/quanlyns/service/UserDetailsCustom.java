@@ -8,7 +8,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-// @Component("userDetailsService") Báo cho Spring Security: “Dùng class này để load user khi login”
+// @Component("userDetailsService") để thông báo cho spring container biết đây là 1 bean và dùng khi cần
+// Báo cho Spring Security: “Dùng class này để load user khi login”
 @Component("userDetailsService")
 public class UserDetailsCustom implements UserDetailsService {
 
