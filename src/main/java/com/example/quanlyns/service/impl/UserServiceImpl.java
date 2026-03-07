@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import com.example.quanlyns.entity.User;
 import com.example.quanlyns.entity.dto.Meta;
 import com.example.quanlyns.entity.dto.ResultPaginationDTO;
+import com.example.quanlyns.entity.response.CreateUserResponse;
+import com.example.quanlyns.entity.response.UpdateUserResponse;
 import com.example.quanlyns.repository.UserRepository;
 import com.example.quanlyns.service.UserService;
 
@@ -28,7 +30,7 @@ public class UserServiceImpl implements UserService {
 		if (userRepository.existsByEmail(user.getEmail())) {
 			throw new IllegalArgumentException("Email already exists");
 		}
-		return userRepository.save(user);
+		return this.userRepository.save(user);
 	}
 
 	@Override
@@ -56,11 +58,31 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User updateUser(Long id, User updatedUser) {
-		return userRepository.findById(id).map(user -> {
-			user.setName(updatedUser.getName());
-			user.setEmail(updatedUser.getEmail());
-			return userRepository.save(user);
-		}).orElseThrow(() -> new NoSuchElementException("User not found"));
+
+		User user = userRepository.findById(id).orElse(null);
+
+		if (user == null) {
+			throw new NoSuchElementException("User not found");
+		}
+
+		if (userRepository.existsByEmail(updatedUser.getEmail())) {
+			throw new IllegalArgumentException("Email already exists");
+		}
+
+		user.setName(updatedUser.getName());
+		user.setEmail(updatedUser.getEmail());
+		user.setAddress(updatedUser.getAddress());
+		user.setAge(updatedUser.getAge());
+		user.setGender(updatedUser.getGender());
+
+		// User user2 = this.userRepository.save(user);
+
+		// UpdateUserResponse updateUserResponse = new UpdateUserResponse(id,
+		// user2.getName(), user2.getEmail(),
+		// user2.getAge(), user2.getGender(), user2.getAddress(), user2.getUpdatedAt(),
+		// user2.getUpdatedBy());
+
+		return this.userRepository.save(user);
 	}
 
 	@Override
@@ -74,5 +96,17 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User handleGetUserByUsername(String username) {
 		return userRepository.findByEmail(username);
+	}
+
+	@Override
+	public CreateUserResponse convertToCreateUserResponse(User user) {
+		return new CreateUserResponse(user.getId(), user.getName(), user.getEmail(), user.getAge(), user.getGender(),
+				user.getAddress(), user.getCreatedAt(), user.getCreatedBy());
+	}
+
+	@Override
+	public UpdateUserResponse convertUpdateUserResponse(User user) {
+		return new UpdateUserResponse(user.getId(), user.getName(), user.getEmail(), user.getAge(),
+				user.getGender(), user.getAddress(), user.getUpdatedAt(), user.getUpdatedBy());
 	}
 }

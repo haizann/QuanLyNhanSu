@@ -8,6 +8,8 @@ import org.springframework.data.jpa.domain.Specification;
 
 import com.example.quanlyns.entity.User;
 import com.example.quanlyns.entity.dto.ResultPaginationDTO;
+import com.example.quanlyns.entity.response.CreateUserResponse;
+import com.example.quanlyns.entity.response.UpdateUserResponse;
 
 public interface UserService {
 
@@ -22,4 +24,8 @@ public interface UserService {
 	void deleteUser(Long id);
 
 	User handleGetUserByUsername(String email);
+
+	CreateUserResponse convertToCreateUserResponse(User user);
+
+	UpdateUserResponse convertUpdateUserResponse(User user);
 }

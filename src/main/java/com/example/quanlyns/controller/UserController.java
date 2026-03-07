@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.quanlyns.entity.User;
 import com.example.quanlyns.entity.dto.ResultPaginationDTO;
 import com.example.quanlyns.entity.response.ApiResponse;
+import com.example.quanlyns.entity.response.CreateUserResponse;
+import com.example.quanlyns.entity.response.UpdateUserResponse;
 import com.example.quanlyns.service.UserService;
 import com.turkraft.springfilter.boot.Filter;
 
@@ -29,7 +31,7 @@ import jakarta.validation.Valid;
 
 @RestController
 // @CrossOrigin(origins = "http://localhost:5173")
-// @RequestMapping("/api/v1")
+@RequestMapping("/api/v1")
 public class UserController {
 
 	private final UserService userService;
@@ -41,11 +43,13 @@ public class UserController {
 	}
 
 	@PostMapping("/users")
-	public ResponseEntity<ApiResponse<User>> createUser(@Valid @RequestBody User user) {
+	public ResponseEntity<ApiResponse<CreateUserResponse>> createUser(@Valid @RequestBody User user) {
 		user.setPassword(this.passwordEncoder.encode(user.getPassword()));
+
 		User created = userService.createUser(user);
 
-		var result = new ApiResponse<User>(HttpStatus.CREATED, "Create", created, null);
+		var result = new ApiResponse<CreateUserResponse>(HttpStatus.CREATED, "Create",
+				this.userService.convertToCreateUserResponse(user), null);
 		// ApiResponse<User> result1 = new ApiResponse<User>(HttpStatus.CREATED,
 		// "Create", created, null);
 
@@ -82,9 +86,10 @@ public class UserController {
 	}
 
 	@PutMapping("/users/{id}")
-	public ResponseEntity<ApiResponse<User>> updateUser(@PathVariable Long id, @RequestBody User user) {
+	public ResponseEntity<ApiResponse<UpdateUserResponse>> updateUser(@PathVariable Long id, @RequestBody User user) {
 		User updated = userService.updateUser(id, user);
-		var result = new ApiResponse<User>(HttpStatus.OK, "updated", updated, null);
+		var result = new ApiResponse<UpdateUserResponse>(HttpStatus.OK, "updated",
+				this.userService.convertUpdateUserResponse(updated), null);
 
 		return ResponseEntity.ok(result);
 	}
